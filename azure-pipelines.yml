@@ -1,0 +1,48 @@
+trigger:
+- master
+
+pool:
+  vmImage: macOS-11
+
+steps:
+- bash: |
+    RUGBY_LATEST_VERSION='1.10'
+    echo "##vso[task.setvariable variable=RUGBY_LATEST_VERSION]$RUGBY_LATEST_VERSION"
+    echo "##vso[task.prependpath]$(HOME)/.mint/bin"
+  displayName: 'Fetch Rugby latest version'
+
+- task: Cache@2
+  inputs:
+    key: 'npm | "$(Agent.OS)" | package-lock.json'
+    path:  $(System.DefaultWorkingDirectory)/node_modules
+    cacheHitVar: NPM_CACHE_FOUND
+  displayName: Cache npm
+
+- task: Cache@2
+  inputs:
+    key: 'pods | "$(Agent.OS)" | $(System.DefaultWorkingDirectory)/ios/Podfile.lock'
+    path: $(System.DefaultWorkingDirectory)/ios/Pods
+    cacheHitVar: PODS_CACHE_FOUND
+  displayName: 'Cache Pods'
+
+- task: Cache@2
+  inputs:
+    key: 'rugby | "$(RUGBY_LATEST_VERSION)"'
+    path: $(HOME)/.mint/packages
+    cacheHitVar: 'RUGBY_CACHE_FOUND'
+  displayName: 'Cache Rugby'
+
+- script: npm ci
+  condition: eq(variables.NPM_CACHE_FOUND, 'false')
+  displayName: 'Run NPM'
+
+- script: |
+    pod install
+    brew install mint
+    mint install swiftyfinch/rugby
+    mkdir -v /Users/runner/.mint/bin 
+    ln -s $(HOME)/.mint/packages/github.com_swiftyfinch_rugby/build/$(RUGBY_LATEST_VERSION)/rugby $(HOME)/.mint/bin/rugby
+    rugby
+  workingDirectory: $(System.DefaultWorkingDirectory)/ios
+  condition: or(eq(variables.RUGBY_CACHE_FOUND, 'false'), eq(variables.PODS_CACHE_FOUND, 'false'))
+  displayName: 'Install Mint and Rugby on cache miss'
