@@ -40,7 +40,7 @@ steps:
     pod install
     brew install mint
     mint install swiftyfinch/rugby
-    mkdir -v /Users/runner/.mint/bin 
+    mkdir -v $(HOME)/.mint/bin 
     ln -s $(HOME)/.mint/packages/github.com_swiftyfinch_rugby/build/$(RUGBY_LATEST_VERSION)/rugby $(HOME)/.mint/bin/rugby
     rugby
   workingDirectory: $(System.DefaultWorkingDirectory)/ios
