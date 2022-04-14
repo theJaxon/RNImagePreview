@@ -4,9 +4,13 @@ PODS:
 DEPENDENCIES:
   - JTSImageViewController
 
+SPEC REPOS:
+  trunk:
+    - JTSImageViewController
+
 SPEC CHECKSUMS:
   JTSImageViewController: 1f8ce1cc93dab0d0af8e53badeea7528560cfec9
 
 PODFILE CHECKSUM: 0a45516fb00b636ad5bcd4a7979dea4c15e05c58
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.11.3
