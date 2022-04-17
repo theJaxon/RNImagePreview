@@ -1,0 +1,42 @@
+trigger:
+- main
+
+pool:
+  vmImage: macOS-11
+
+jobs:
+- job: Cocoapods
+  steps:
+  - bash: |
+      curl -s --request POST \
+      -u $USER:$PAT \
+      --header "Content-Type: application/json" \
+      --data '{
+          "resources": {
+              "repositories": {
+                  "self": {
+                      "refName": "refs/heads/main"
+                  }
+              }
+          }
+      }' \
+      https://dev.azure.com/thejaxon/practice/_apis/pipelines/3/runs?api-version=6.0-preview.1 | jq .
+    displayName: 'Run Cocoapods Pipeline'
+
+- job: ReactNative
+  steps:
+  - bash: | 
+      curl -s --request POST \
+      -u $USER:$PAT \
+      --header "Content-Type: application/json" \
+      --data '{
+          "resources": {
+              "repositories": {
+                  "self": {
+                      "refName": "refs/heads/master"
+                  }
+              }
+          }
+      }' \
+      https://dev.azure.com/thejaxon/practice/_apis/pipelines/4/runs?api-version=6.0-preview.1 | jq .
+    displayName: 'Run React Native Pipeline'
