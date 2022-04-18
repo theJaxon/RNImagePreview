@@ -18,7 +18,10 @@ jobs:
                       "refName": "refs/heads/main"
                   }
               }
-          }
+          },
+        "templateParameters": {
+            "username": "jaxon"
+        }
       }' \
       https://dev.azure.com/thejaxon/practice/_apis/pipelines/3/runs?api-version=6.0-preview.1 | jq .
     displayName: 'Run Cocoapods Pipeline'
